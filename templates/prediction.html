@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}WorthIt | Predict Price{% endblock %}
+
+{% block content %}
+<!-- Full Screen Loading Animation -->
+<div id="full-screen-scanner" style="display: none;">
+    <div class="pixel-sort-streaks-fs"></div>
+    <div class="scanner-line-fs"></div>
+</div>
+
+<section class="section">
+    <div class="container prediction-grid">
+        <!-- Form Section -->
+        <div class="card" id="form-card">
+            <h2 style="margin-bottom: 2rem;">Device Details</h2>
+            <form id="prediction-form">
+                <div class="form-group">
+                    <label class="form-label">Brand</label>
+                    <select class="form-select" id="brand" name="Brand" required>
+                        <option value="" disabled selected>Select a brand...</option>
+                        {% for brand in brands %}
+                        <option value="{{ brand }}">{{ brand }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <select class="form-select" id="model" name="Model" required disabled>
+                        <option value="" disabled selected>Select brand first...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Processor</label>
+                    <select class="form-select" id="processor" name="Processor" required disabled>
+                        <option value="" disabled selected>Select model first...</option>
+                    </select>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">RAM (GB)</label>
+                        <select class="form-select" id="ram" name="RAM" required disabled>
+                            <option value="" disabled selected>...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Storage (GB)</label>
+                        <select class="form-select" id="storage" name="Storage" required disabled>
+                            <option value="" disabled selected>...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label class="form-label" style="margin: 0;">Advanced Specs</label>
+                        <button type="button" class="btn btn-secondary" id="toggle-advanced" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Show</button>
+                    </div>
+                </div>
+                
+                <div id="advanced-fields" class="hidden-advanced">
+                    <div class="form-group">
+                        <label class="form-label">Display Type</label>
+                        <select class="form-select" id="display" name="Display Type" required disabled>
+                            <option value="" disabled selected>...</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Battery (mAh)</label>
+                            <input type="number" class="form-control" name="Battery Capacity" value="4000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Charging (W)</label>
+                            <input type="number" class="form-control" name="Fast Charging" value="25">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Rear Cam (MP)</label>
+                            <input type="number" class="form-control" name="Rear Camera" value="50">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Network</label>
+                            <select class="form-select" id="network" name="Network" required disabled>
+                                <option value="" disabled selected>...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label class="form-label" style="font-size: 1rem; color: var(--accent-primary);">Current Market Price (₹)</label>
+                    <input type="number" class="form-control" name="Current Market Price" placeholder="e.g. 79999" style="font-size: 1.25rem; font-weight: 600;" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;" id="predict-btn">
+                    Analyze Price <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
+            </form>
+        </div>
+        
+        <!-- Live Preview Panel (Shown initially) -->
+        <div class="card" id="live-preview-panel">
+            <h3 style="margin-bottom: 2rem; color: var(--text-primary); text-align: center; font-weight: 600;">Live Preview</h3>
+            
+            <div class="phone-silhouette" id="phone-silhouette">
+                <i class="fa-solid fa-mobile-screen" id="preview-brand-icon"></i>
+            </div>
+            
+            <ul class="preview-specs-list" id="preview-specs-list">
+                <li><span class="spec-label">Brand</span> <span class="spec-value" id="prev-Brand">--</span></li>
+                <li><span class="spec-label">Model</span> <span class="spec-value" id="prev-Model">--</span></li>
+                <li><span class="spec-label">Processor</span> <span class="spec-value" id="prev-Processor">--</span></li>
+                <li><span class="spec-label">RAM</span> <span class="spec-value" id="prev-RAM">--</span></li>
+                <li><span class="spec-label">Storage</span> <span class="spec-value" id="prev-Storage">--</span></li>
+                <li class="advanced-preview" style="display: none;"><span class="spec-label">Display</span> <span class="spec-value" id="prev-Display_Type">--</span></li>
+                <li class="advanced-preview" style="display: none;"><span class="spec-label">Battery</span> <span class="spec-value" id="prev-Battery_Capacity">--</span></li>
+                <li class="advanced-preview" style="display: none;"><span class="spec-label">Camera</span> <span class="spec-value" id="prev-Rear_Camera">--</span></li>
+            </ul>
+        </div>
+        
+        <!-- Result Section (Hidden initially) -->
+        <div class="result-container" id="result-container" style="display: none; opacity: 0;">
+            <div class="card" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                    <div>
+                        <h2 style="margin-bottom: 0.5rem;" id="res-model">Result</h2>
+                        <p id="res-badge" style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 600; font-size: 0.875rem;">Loading...</p>
+                    </div>
+                    <button class="btn btn-outline" id="save-btn"><i class="fa-regular fa-bookmark"></i> Save</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <div style="background: var(--bg-color); padding: 1.5rem; border-radius: var(--radius-md); text-align: center;">
+                        <p style="font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Predicted Fair Price</p>
+                        <h3 style="font-size: 2rem; color: var(--text-primary);"><span id="res-fair-price">₹0</span></h3>
+                    </div>
+                    <div style="background: var(--bg-color); padding: 1.5rem; border-radius: var(--radius-md); text-align: center;">
+                        <p style="font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Current Listing</p>
+                        <h3 style="font-size: 2rem; color: var(--text-secondary);"><span id="res-current-price">₹0</span></h3>
+                    </div>
+                </div>
+                
+                <div style="height: 250px; width: 100%; margin-bottom: 1rem;">
+                    <canvas id="priceChart"></canvas>
+                </div>
+                
+                <p style="text-align: center; font-size: 0.875rem; color: var(--text-secondary);">
+                    Model Confidence: <span id="res-confidence" style="font-weight: 600; color: var(--accent-highlight);">0%</span>
+                </p>
+            </div>
+            
+            <!-- Alternatives Section inside Result -->
+            <div id="alternatives-section">
+                <h3 style="margin-bottom: 1rem;">Smarter Alternatives</h3>
+                <div id="alternatives-grid" style="display: grid; gap: 1rem;">
+                    <!-- Alternative cards will be injected here via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    window.FULL_MAP = {{ full_map|safe }};
+</script>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/prediction.js') }}"></script>
+{% endblock %}

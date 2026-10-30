@@ -1,0 +1,98 @@
+/* ==========================================================================
+   WorthIt - Animations & Polish (GSAP / CSS)
+   ========================================================================== */
+
+/* 1. Glassmorphism Panels */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: var(--shadow-md);
+}
+
+/* 2. Soft Warm Glows (for light theme) */
+.glow-primary {
+    box-shadow: 0 0 30px rgba(193, 80, 47, 0.15); /* Terracotta glow */
+}
+
+.glow-secondary {
+    box-shadow: 0 0 30px rgba(63, 93, 69, 0.15); /* Green glow */
+}
+
+/* 3. Hover Transformations */
+.hover-float {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.hover-float:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* 4. Particle Background / Subtle Noise */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 5. Custom Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg, #F2F0EA 25%, #E8E4DA 50%, #F2F0EA 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite linear;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* 6. Floating Animation for Hero Phone/Shapes */
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(2deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.floating-shape {
+    animation: float 6s ease-in-out infinite;
+}
+
+.floating-shape:nth-child(2) {
+    animation-delay: -3s;
+    animation-duration: 7s;
+}
+
+/* Buttons Ripple Effect Base */
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 5px; height: 5px;
+    background: rgba(255,255,255,0.4);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+@keyframes ripple {
+    0% { transform: scale(0, 0); opacity: 1; }
+    20% { transform: scale(25, 25); opacity: 1; }
+    100% { opacity: 0; transform: scale(40, 40); }
+}
+
+.btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}

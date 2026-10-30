@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}WorthIt | AI-Powered Smartphone Price Intelligence{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between; gap: 4rem;">
+        <div style="flex: 1;">
+            <h1 style="font-size: 4rem; line-height: 1.1; margin-bottom: 1.5rem;">
+                Don't overpay for your next <span style="color: var(--accent-primary);">smartphone.</span>
+            </h1>
+            <p style="font-size: 1.25rem; margin-bottom: 2.5rem; max-width: 500px;">
+                AI-powered smartphone price intelligence. Enter any phone specs and instantly know its true fair market value and see cheaper alternatives.
+            </p>
+            <div style="display: flex; gap: 1rem;">
+                <a href="{{ url_for('prediction') }}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                    Start Predicting <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="#how-it-works" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                    Learn More
+                </a>
+            </div>
+        </div>
+        <div style="flex: 1; display: flex; justify-content: center; position: relative;">
+            <!-- Placeholder for animated phone illustration -->
+            <div style="width: 320px; height: 600px; background: var(--card-surface); border: 12px solid var(--text-primary); border-radius: 40px; box-shadow: var(--shadow-lg); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <div style="position: absolute; top: 0; width: 150px; height: 25px; background: var(--text-primary); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;"></div>
+                <div style="text-align: center; color: var(--accent-primary);">
+                    <i class="fa-solid fa-chart-line" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                    <h3 style="color: var(--text-primary);">WorthIt.</h3>
+                </div>
+            </div>
+            <!-- Floating Elements -->
+            <div class="floating-shape" style="position: absolute; top: 10%; right: 0; background: var(--secondary-surface); padding: 1rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); font-weight: 600;">
+                <i class="fa-solid fa-check-circle" style="color: var(--accent-secondary);"></i> Fair Price
+            </div>
+            <div class="floating-shape" style="position: absolute; bottom: 20%; left: -5%; background: var(--card-surface); padding: 1rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); font-weight: 600; color: var(--danger);">
+                <i class="fa-solid fa-arrow-trend-down"></i> Save ₹10,000
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="how-it-works" class="section" style="background-color: var(--card-surface);">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <h2>Intelligence behind the price.</h2>
+            <p style="max-width: 600px; margin: 0 auto;">Our machine learning model is trained on thousands of historical data points to ensure you always get the best deal.</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+            <div class="card" style="text-align: center;">
+                <div style="width: 64px; height: 64px; background: var(--secondary-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fa-solid fa-brain" style="font-size: 1.5rem; color: var(--accent-primary);"></i>
+                </div>
+                <h3>AI Prediction</h3>
+                <p style="margin-top: 1rem;">XGBoost algorithms analyze 10+ core specifications to accurately calculate the real market value of any phone.</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <div style="width: 64px; height: 64px; background: var(--secondary-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fa-solid fa-code-compare" style="font-size: 1.5rem; color: var(--accent-secondary);"></i>
+                </div>
+                <h3>Smart Alternatives</h3>
+                <p style="margin-top: 1rem;">Instantly surfaces cheaper phones with identical or better specs so you never miss out on a better bargain.</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <div style="width: 64px; height: 64px; background: var(--secondary-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fa-solid fa-bookmark" style="font-size: 1.5rem; color: var(--accent-highlight);"></i>
+                </div>
+                <h3>Track & Save</h3>
+                <p style="margin-top: 1rem;">Save your favourite devices and check back to see how their fair market price fluctuates over time.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

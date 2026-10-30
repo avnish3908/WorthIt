@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}WorthIt | Settings{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 8rem; min-height: 100vh;">
+    <div class="container" style="max-width: 800px;">
+        <h1 style="margin-bottom: 2rem;">Settings</h1>
+        
+        <div class="card">
+            <form id="settings-form">
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Preferences</h3>
+                    <label class="form-label">Currency</label>
+                    <select class="form-select" name="currency" id="currency">
+                        <option value="INR" selected>INR (₹)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label class="form-label">Theme</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <label style="flex: 1; border: 1px solid var(--border-divider); padding: 1rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; background: var(--card-surface);">
+                            <input type="radio" name="theme" value="light" {% if settings.get('theme', 'light') == 'light' %}checked{% endif %}> Light / Paper
+                        </label>
+                        <label style="flex: 1; border: 1px solid var(--border-divider); padding: 1rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; background: #1C1B17; color: #FAF8F3;">
+                            <input type="radio" name="theme" value="dark" {% if settings.get('theme') == 'dark' %}checked{% endif %}> Dark Mode
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="save-settings-btn">Save Preferences</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+    // Sync radio buttons with localStorage on load
+    const savedTheme = localStorage.getItem('theme') || '{{ settings.get("theme", "light") if settings else "light" }}';
+    const themeRadio = document.querySelector(`input[name="theme"][value="${savedTheme}"]`);
+    if (themeRadio) {
+        themeRadio.checked = true;
+    }
+
+    // Instant theme switch
+    document.querySelectorAll('input[name="theme"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+    });
+
+    document.getElementById('settings-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('save-settings-btn');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        
+        const data = {
+            currency: document.getElementById('currency').value,
+            theme: document.querySelector('input[name="theme"]:checked').value
+        };
+        
+        try {
+            const res = await fetch('/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if(res.ok) {
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+                    setTimeout(() => btn.innerText = 'Save Preferences', 2000);
+                }, 500);
+            }
+        } catch(e) {
+            console.error(e);
+            btn.innerText = 'Error Saving';
+        }
+    });
+</script>
+{% endblock %}

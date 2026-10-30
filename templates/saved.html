@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}WorthIt | Saved Phones{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 8rem; min-height: 100vh;">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
+            <div>
+                <h1 style="margin-bottom: 0.5rem;">Saved Devices</h1>
+                <p>Track the phones you've analyzed.</p>
+            </div>
+            <a href="{{ url_for('prediction') }}" class="btn btn-outline"><i class="fa-solid fa-plus"></i> New Prediction</a>
+        </div>
+        
+        {% if saved_items %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+            {% for item in saved_items %}
+            <div class="card" style="position: relative;">
+                <button class="delete-btn" data-id="{{ item.id }}" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.5rem; transition: var(--transition-fast);">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+                <div style="margin-bottom: 1rem;">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--accent-secondary); text-transform: uppercase; letter-spacing: 0.05em;">{{ item.brand }}</span>
+                    <h3 style="margin-bottom: 0.25rem;">{{ item.model if item.model else 'Custom Build' }}</h3>
+                    <p style="font-size: 0.875rem;">{{ item.ram }}GB RAM | {{ item.storage }}GB | {{ item.processor }}</p>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-divider);">
+                    <div>
+                        <p style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase;">Fair Price</p>
+                        <h4 style="color: var(--text-primary);">₹{{ "%.0f"|format(item.predicted_price) }}</h4>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase;">Listed At</p>
+                        <h4 style="color: var(--text-secondary);">₹{{ "%.0f"|format(item.current_price) }}</h4>
+                    </div>
+                </div>
+                {% if item.savings > 0 %}
+                <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(63, 93, 69, 0.1); color: var(--accent-secondary); text-align: center; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">
+                    Savings: ₹{{ "%.0f"|format(item.savings) }}
+                </div>
+                {% elif item.savings < 0 %}
+                <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(155, 59, 50, 0.1); color: var(--danger); text-align: center; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">
+                    Overpriced by: ₹{{ "%.0f"|format(item.savings | abs) }}
+                </div>
+                {% else %}
+                <div style="margin-top: 1rem; padding: 0.5rem; background: var(--secondary-surface); color: var(--text-primary); text-align: center; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">
+                    Fair Deal
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card" style="text-align: center; padding: 4rem 2rem;">
+            <i class="fa-regular fa-folder-open" style="font-size: 3rem; color: var(--border-divider); margin-bottom: 1rem;"></i>
+            <h3>No saved devices yet.</h3>
+            <p style="margin-bottom: 2rem;">Go to the Prediction page to analyze and save your first device.</p>
+            <a href="{{ url_for('prediction') }}" class="btn btn-primary">Start Predicting</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.dataset.id;
+            if(confirm('Delete this saved phone?')) {
+                try {
+                    const res = await fetch(`/saved/${id}`, { method: 'DELETE' });
+                    if(res.ok) window.location.reload();
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
